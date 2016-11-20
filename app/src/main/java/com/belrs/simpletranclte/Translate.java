@@ -1,25 +1,19 @@
 package com.belrs.simpletranclte;
 
 /**
- * Created by Роман on 15.11.2016.
+ * Created by Роман on 20.11.2016.
  */
 
 public class Translate {
 
-    private String mFerstText;
-    private String mTraslateText;
 
-    public Translate(String ferstText, String traslateText) {
-        mFerstText = ferstText;
-        mTraslateText = traslateText;
+    private String mTranslate;
+
+    public Translate(String translate) {
+        mTranslate = translate;
     }
 
-    public String getFerstText() {
-        return mFerstText;
+    public String getTranslate() {
+        return mTranslate;
     }
-
-    public String getTraslateText() {
-        return mTraslateText;
-    }
-
 }

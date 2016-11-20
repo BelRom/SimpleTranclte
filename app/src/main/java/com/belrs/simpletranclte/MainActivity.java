@@ -1,19 +1,20 @@
 package com.belrs.simpletranclte;
 
 import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.List;
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<String> {
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Translate> {
-
-    private static final int EARTHQUAKE_LOADER_ID = 1;
+    private static final int TRANSLATE_LOADER_ID = 1;
+    public static final String TAG = MainActivity.class.getName();
     private EditText text;
     private TextView translated;
     private Button translateBtn;
@@ -27,45 +28,48 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         text = (EditText) findViewById(R.id.textTranslate);
         translated = (TextView) findViewById(R.id.textAnswer);
-        Translate tr = new Translate();
 
         translateBtn = (Button) findViewById(R.id.buttonTranslate);
         translateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                loadnetwork();
-
-                // Get a reference to the ConnectivityManager to check state of network connectivity
 
 
             }
         });
-    }
 
-    private void loadnetwork() {
         LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this);
+
+        loaderManager.initLoader(TRANSLATE_LOADER_ID, null, this);
+
+
+
     }
 
     @Override
-    public Loader<Translate> onCreateLoader(int i, Bundle bundle) {
-        // Create a new loader for the given URL
+    public Loader<String> onCreateLoader(int id, Bundle args) {
+        Log.i(TAG, "onCreateLoader");
+
         return new TranslateLoader(this, USGS_REQUEST_URL);
     }
 
+
     @Override
-    public void onLoadFinished(Loader<Translate> translate, Translate earthquakes) {
-        translated.setText(translate.getTraslateText());
+    public void onLoadFinished(Loader<String> loader, String data) {
+        Log.i(TAG, "onLoadFinished");
+        translated.setText(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<Translate> loader) {
+    public void onLoaderReset(Loader<String> loader) {
 
     }
+
 }

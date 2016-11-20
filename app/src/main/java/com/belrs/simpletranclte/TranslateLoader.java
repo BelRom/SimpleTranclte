@@ -2,19 +2,20 @@ package com.belrs.simpletranclte;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
-
-import java.util.List;
+import android.util.Log;
 
 /**
- * Created by Роман on 16.11.2016.
+ * Created by Роман on 20.11.2016.
  */
 
-public class TranslateLoader extends AsyncTaskLoader<Translate> {
-
+public class TranslateLoader extends AsyncTaskLoader<String> {
+    private static final String LOG_TAG = TranslateLoader.class.getName();
     private String mUrl;
 
-     public TranslateLoader(Context context, String url) {
+    public TranslateLoader(Context context, String url) {
         super(context);
+        Log.i(LOG_TAG, "TranslateLoader");
+
         mUrl = url;
     }
 
@@ -23,17 +24,16 @@ public class TranslateLoader extends AsyncTaskLoader<Translate> {
         forceLoad();
     }
 
-    /**
-     * This is on a background thread.
-     */
     @Override
-    public Translate loadInBackground() {
+    public String loadInBackground() {
+        Log.i(LOG_TAG, "loadInBackground");
         if (mUrl == null) {
             return null;
         }
+        String result = new Fetch()
+                .fetchTranslateData(mUrl);
+        return result;
 
-        // Perform the network request, parse the response, and extract a list of earthquakes.
-        Translate translate = QueryUtils.fetchEarthquakeData(mUrl);
-        return translate;
+
     }
 }

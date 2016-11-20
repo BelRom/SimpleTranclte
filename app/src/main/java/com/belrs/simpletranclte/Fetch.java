@@ -16,20 +16,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-/**
- * Created by Роман on 16.11.2016.
- */
-public class QueryUtils {
 
-    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
+public class Fetch {
 
-    private QueryUtils() {
-    }
+    private static final String LOG_TAG = Fetch.class.getSimpleName();
 
+    public String fetchTranslateData(String urlSpec) {
+        Log.i(LOG_TAG, "fetchTranslateData");
+        URL url = createUrl(urlSpec);
 
-    public static Translate fetchEarthquakeData(String requestUrl) {
-        URL url = createUrl(requestUrl);
-
+        // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
             jsonResponse = makeHttpRequest(url);
@@ -37,10 +33,12 @@ public class QueryUtils {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-         Translate translates = extractFeatureFromJson(jsonResponse);
-         return translates;
-    }
+        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
+        String earthquakes = extractFeatureFromJson(jsonResponse);
 
+        // Return the list of {@link Earthquake}s
+        return earthquakes;
+    }
 
     private static URL createUrl(String stringUrl) {
         URL url = null;
@@ -55,6 +53,7 @@ public class QueryUtils {
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
 
+        // If the URL is null, then return early.
         if (url == null) {
             return jsonResponse;
         }
@@ -68,7 +67,9 @@ public class QueryUtils {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-             if (urlConnection.getResponseCode() == 200) {
+            // If the request was successful (response code 200),
+            // then read the input stream and parse the response.
+            if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
@@ -87,10 +88,7 @@ public class QueryUtils {
         return jsonResponse;
     }
 
-    /**
-     * Convert the {@link InputStream} into a String which contains the
-     * whole JSON response from the server.
-     */
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -106,30 +104,23 @@ public class QueryUtils {
     }
 
 
-    private static Translate extractFeatureFromJson(String translateJSON) {
-        if (TextUtils.isEmpty(translateJSON)) {
+    private static String extractFeatureFromJson(String translateJSON) {
+       if (TextUtils.isEmpty(translateJSON)) {
             return null;
         }
 
-        Translate earthquakes = null;
+        String translate = "";
 
         try {
-
             JSONObject baseJsonResponse = new JSONObject(translateJSON);
-            JSONArray earthquakeArray = baseJsonResponse.getJSONArray("text");
-            String ferstText = baseJsonResponse.getString("lang");
-            String translateText = earthquakeArray.toString();
-
-            earthquakes = new Translate(ferstText, translateText);
-
+            JSONArray array = baseJsonResponse.getJSONArray("text");
+            translate = array.toString();
 
 
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the earthquake JSON results", e);
         }
-
-        return earthquakes;
+        return translate.substring(2, translate.length()-2);
     }
-
 
 }
