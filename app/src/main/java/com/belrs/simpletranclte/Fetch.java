@@ -25,7 +25,6 @@ public class Fetch {
         Log.i(LOG_TAG, "fetchTranslateData");
         URL url = createUrl(urlSpec);
 
-        // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
             jsonResponse = makeHttpRequest(url);
@@ -33,10 +32,8 @@ public class Fetch {
             Log.e(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
         String earthquakes = extractFeatureFromJson(jsonResponse);
 
-        // Return the list of {@link Earthquake}s
         return earthquakes;
     }
 
@@ -53,7 +50,6 @@ public class Fetch {
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
 
-        // If the URL is null, then return early.
         if (url == null) {
             return jsonResponse;
         }
@@ -67,9 +63,7 @@ public class Fetch {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-            // If the request was successful (response code 200),
-            // then read the input stream and parse the response.
-            if (urlConnection.getResponseCode() == 200) {
+             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {

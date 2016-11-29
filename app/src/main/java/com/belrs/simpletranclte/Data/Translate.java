@@ -1,4 +1,4 @@
-package com.belrs.simpletranclte;
+package com.belrs.simpletranclte.Data;
 
 /**
  * Created by Роман on 20.11.2016.
