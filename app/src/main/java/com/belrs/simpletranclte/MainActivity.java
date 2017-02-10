@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     RecyclerView recyclerView;
     static Map<String, String> mAllLanguage = new HashMap<>();
     private WordLab wb;
+    private RecyclerWordAdapter mRecyclerWordAdapter;
+
 
 
 
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
 
     private final String BASE_URL = "https://translate.yandex.net/api/v1.5/tr.json/translate";
     private final String KEY = "trnsl.1.1.20161107T134745Z.9649398a0eff1f45.276bfd87a5df1dd10e7c1ef2ed94a5486397df45";
-    private String mText = "";
+    private String mTranslateWord = "";
 
 
 
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         mTranslateButton = (Button) findViewById(R.id.buttonTranslate);
         mSaveButton = (Button) findViewById(R.id.buttonSave);
         mRefreshButton = (Button) findViewById(R.id.buttonRefresh);
-
+        mRecyclerWordAdapter = new RecyclerWordAdapter(wb.getWord(),this);
 
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         mTranslateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mText = mEditText.getText().toString();
+                mTranslateWord = mEditText.getText().toString();
 
                 startloader();
             }
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                 String lastWord = mTranslatedTextView.getText().toString();
                 Word mWord = new Word(ferstWord, lastWord);
                 wb.addWord(mWord);
+                mRecyclerWordAdapter.swap(wb.getWord());
             }
         });
 
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new SimpleRVAdapter());
+        recyclerView.setAdapter(mRecyclerWordAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
 
@@ -205,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("key", KEY);
-        uriBuilder.appendQueryParameter("text", mText);
+        uriBuilder.appendQueryParameter("text", mTranslateWord);
         uriBuilder.appendQueryParameter("lang", mFerstLangugeCode +"-"+ mSecondLangugeCode);
 
         return new TranslateLoader(this, uriBuilder.toString());
