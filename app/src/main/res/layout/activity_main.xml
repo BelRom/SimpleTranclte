@@ -38,12 +38,7 @@
         android:layout_below="@+id/textAnswer"
         android:layout_alignParentStart="true"/>
 
-    <android.support.v4.widget.ContentLoadingProgressBar
-        android:id="@+id/loading_indicator"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+
 
     <Button
         android:text="@string/save"
@@ -56,26 +51,54 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
+        android:id="@+id/ferstLanguge"
         android:layout_alignTop="@+id/buttonSave"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/buttonSave"/>
 
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner2"
-        android:layout_below="@+id/spinner"
+        android:id="@+id/secondLanguge"
+        android:layout_below="@+id/ferstLanguge"
         android:layout_toEndOf="@+id/buttonSave"/>
 
-    <ScrollView
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/buttonTranslate"
+        android:layout_below="@+id/buttonRefresh"
         android:layout_alignParentStart="true">
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/saveWards"/>
-    </ScrollView>
+            android:layout_height="118dp"
+            android:id="@+id/recyclerview"/>
+
+    </FrameLayout>
+
+    <Button
+        android:text="refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonRefresh"
+        android:layout_below="@+id/buttonTranslate"/>
+
+    <Button
+        android:text="Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonTranslate"
+        android:layout_toEndOf="@+id/buttonRefresh"
+        android:id="@+id/buttonDelete"/>
+
+    <Button
+        android:text="Update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonSave"
+        android:layout_toEndOf="@+id/buttonDelete"
+        android:id="@+id/buttonUpdate"/>
+
+
 </RelativeLayout>
