@@ -92,7 +92,6 @@ public class WordLab {
                 null  // orderBy
         );
 
-
         return new WordCursorWrapper(cursor);
     }
 

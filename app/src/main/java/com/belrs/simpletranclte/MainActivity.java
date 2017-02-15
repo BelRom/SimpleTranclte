@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     private String mFerstLangugeCode, mSecondLangugeCode;
     RecyclerView recyclerView;
     static Map<String, String> mAllLanguage = new HashMap<>();
-    private WordLab wb;
+    private WordLab mWordLab;
     private RecyclerWordAdapter mRecyclerWordAdapter;
 
 
@@ -61,12 +61,11 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     public void onCreate(Bundle savedInstanceState) {
 
 
-
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setdata();
-        wb = WordLab.get(this);
+
 
         mUpdateButtton  = (Button) findViewById(R.id.buttonUpdate);
         mDeleteButton  = (Button) findViewById(R.id.buttonDelete);
@@ -75,12 +74,15 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         mTranslateButton = (Button) findViewById(R.id.buttonTranslate);
         mSaveButton = (Button) findViewById(R.id.buttonSave);
         mRefreshButton = (Button) findViewById(R.id.buttonRefresh);
-        mRecyclerWordAdapter = new RecyclerWordAdapter(wb.getWord(),this);
+
+
+        mWordLab = WordLab.get(this);
+        mRecyclerWordAdapter = new RecyclerWordAdapter(mWordLab.getWord(),this);
 
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wb.deleteWord(mEditText.getText().toString());
+                mWordLab.deleteWord(mEditText.getText().toString());
                 Log.d(LOG_TAG, "delete");
             }
         });
@@ -92,17 +94,16 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                 String ferstWord = mEditText.getText().toString();
                 String lastWord = mTranslatedTextView.getText().toString();
                 Word mWord = new Word(ferstWord, lastWord);
-                wb.updateWord(mWord);
+                mWordLab.updateWord(mWord);
+
             }
         });
-
 
 
         mTranslateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mTranslateWord = mEditText.getText().toString();
-
                 startloader();
             }
         });
@@ -113,21 +114,19 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                 String ferstWord = mEditText.getText().toString();
                 String lastWord = mTranslatedTextView.getText().toString();
                 Word mWord = new Word(ferstWord, lastWord);
-                wb.addWord(mWord);
-                mRecyclerWordAdapter.swap(wb.getWord());
+                mWordLab.addWord(mWord);
+                mRecyclerWordAdapter.swap(mWordLab.getWord());
             }
         });
 
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Log.d(LOG_TAG, "log");
-                List<Word> listWords = wb.getWord();
+                List<Word> listWords = mWordLab.getWord();
                 for (Word word : listWords) {
                     Log.d(LOG_TAG, word.getFerstWord() +" "+ word.getSecondWord());
                 }
-
             }
         });
 
@@ -170,11 +169,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-
-
-
-
     }
+
+
 
     @Override
     protected void onPause() {
@@ -183,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     }
 
     private void startloader (){
+
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
 
