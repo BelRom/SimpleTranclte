@@ -1,4 +1,4 @@
-package com.belrs.simpletranclte;
+package com.belrs.simpletranclte.Dictionary;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.belrs.simpletranclte.Data.Word;
+import com.belrs.simpletranclte.R;
 
 import java.util.List;
 

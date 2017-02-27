@@ -3,15 +3,13 @@ package com.belrs.simpletranclte;
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.belrs.simpletranclte.Data.Word;
+import com.belrs.simpletranclte.Dictionary.DictionaryActivity;
+import com.belrs.simpletranclte.GameOne.GameOneActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,16 +34,16 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     final String LOG_TAG = "myLogs";
     private  int translate_loader_id = 1;
     public static final String TAG = MainActivity.class.getName();
-    private TextView mTranslatedTextView;
+    private TextView mTranslatedTextView, mGameOneTextView;
     private EditText mEditText;
-    private Button mTranslateButton, mSaveButton, mRefreshButton, mUpdateButtton, mDeleteButton;
+    private Button mTranslateButton, mSaveButton, mRefreshButton, mUpdateButtton, mDeleteButton, mDictionaryButton;
     private Spinner mFerstLanguageSpinner, mSecondLanguageSpinner;
     private List <String> Convert1 = new ArrayList<>();
     private String mFerstLangugeCode, mSecondLangugeCode;
-    RecyclerView recyclerView;
     static Map<String, String> mAllLanguage = new HashMap<>();
     private WordLab mWordLab;
-    private RecyclerWordAdapter mRecyclerWordAdapter;
+    private Cash mCash;
+    private Intent intent;
 
 
 
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setdata();
+        mCash = Cash.getCash();
+        mWordLab = WordLab.get(this);
 
 
         mUpdateButtton  = (Button) findViewById(R.id.buttonUpdate);
@@ -74,16 +76,29 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         mTranslateButton = (Button) findViewById(R.id.buttonTranslate);
         mSaveButton = (Button) findViewById(R.id.buttonSave);
         mRefreshButton = (Button) findViewById(R.id.buttonRefresh);
+        mDictionaryButton = (Button) findViewById(R.id.dictionaryButton);
+        mGameOneTextView = (TextView) findViewById(R.id.gameOneTextView);
 
-
-        mWordLab = WordLab.get(this);
-        mRecyclerWordAdapter = new RecyclerWordAdapter(mWordLab.getWord(),this);
-
+        intent = new Intent(this, GameOneActivity.class);
+        mGameOneTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mWordLab.deleteWord(mEditText.getText().toString());
                 Log.d(LOG_TAG, "delete");
+            }
+        });
+
+        mDictionaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), DictionaryActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -104,7 +119,13 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
             @Override
             public void onClick(View view) {
                 mTranslateWord = mEditText.getText().toString();
-                startloader();
+                if (mCash.hasWord(getBaseContext(), mFerstLangugeCode+"-"+mSecondLangugeCode, mTranslateWord)){
+                    String data = mCash.loadTranslateWord(getBaseContext(), mFerstLangugeCode+"-"+mSecondLangugeCode, mTranslateWord);
+                    mTranslatedTextView.setText(data);
+                }else{
+                    startloader();
+                }
+
             }
         });
 
@@ -115,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
                 String lastWord = mTranslatedTextView.getText().toString();
                 Word mWord = new Word(ferstWord, lastWord);
                 mWordLab.addWord(mWord);
-                mRecyclerWordAdapter.swap(mWordLab.getWord());
+//                mRecyclerWordAdapter.swap(mWordLab.getWord());
             }
         });
 
@@ -131,10 +152,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         });
 
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(mRecyclerWordAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
 
 
         mFerstLanguageSpinner = (Spinner) findViewById(R.id.ferstLanguge);
@@ -217,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
     public void onLoadFinished(Loader<String> loader, String data) {
         Log.i(TAG, "onLoadFinished");
         mTranslatedTextView.setText(data);
+        mCash.save(getBaseContext(), mFerstLangugeCode+"-"+mSecondLangugeCode, mTranslateWord, data);
 
     }
 
@@ -232,6 +251,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<S
         mAllLanguage.put("Albanian","sq");
         mAllLanguage.put("Русский","ru");
         mAllLanguage.put("English","en");
+    }
+
+    public void OpenDictionary(){
+
     }
 
 
